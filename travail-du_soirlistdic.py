@@ -1,0 +1,167 @@
+﻿#Projet Bloc 2 Réalisé par Hary Andriananjafy, Mohamed Malide, Serge Marcoccia et Jean-Jacques Cabon
+#Décembre 2019
+#
+#
+#Objectifs
+#Créer et utiliser un dictionnaire
+#Utiliser un algorithme glouton pour créer des listes
+#Objectif pédagogique: saisir l'emploi du temps d'un élève
+#saisir un niveau estimé pour chaque matière
+#Utiliser cet emploi hebdomadaire pour
+#optimiser son travail du soir
+#On suppose que l'élève étudiera 2 heures chaque soir
+#que cela fera 4 demi heures donc 4 matieres
+#chaque discipline sera affectée d'un coefficient
+#Bon= 1 Moyen = 2 Faible = 3
+#Le travail effectué la veille d'un cours sera valorisé
+# et son coefficient sera doublé
+#on cherchera alors les 4 coefficients les plus importants
+#pour etablir un planning pour chaque soir
+
+
+semaine=['lundi','mardi','mercredi','jeudi','vendredi','samedi']
+matieres=['anglais', 'espagnol', 'francais', 'physique', 'mathematiques', 'svt','sciences_economiques', 'histoire','informatique']
+#CREATION DE DICTIONNAIRES
+#Consigne eleve
+#       En utilisant ces deux listes semaine et matieres, définir une fonction saisieEDT(jour,matieres) qui renvoie un dictionnaire
+#       dont les clés sont les matières et les valeurs 1 ou 0 selon qu'il y a ou non cours ce jour la
+#       Creer une fonction saisieEDTdic(semaine,matieres) qui renverra un dictionnaire dont
+#       les clés sont les jours et les valeurs les dictionnaires renvoyés par la fonction saisieEDT et un dictionnaire "aptitude"
+#       de clés les matières et de valeurs 1, 2 ou 3 selon le niveau dans la matiere bon=1 moyen=2 faible=3
+
+def saisieEDTDic(semaine,matieres):
+    EDT={}
+    for jour in semaine:        # On va saisir tous les cours de la semaine jour apres jour
+        dd=jour
+        dd={}
+
+        for cours in matieres:
+            print("avez vous",cours,"le",jour,"oui/non")
+            result=input(cours)
+            if result=='oui':
+                dd[cours]=1          #jour sera un dictionnaire dont les cles sont les matieres
+            else:                       # et les valeurs 1=il y a cours 0=il ny a pas de cours
+                dd[cours]=0           #il suffira de taper entrer sil ny a pas de cours
+        EDT[jour]=dd
+    aptitude={}
+    print("quel est votre niveau en ? Bon=1, Moyen=2, Faible=3")
+    for m in matieres:
+        resp=input(m)
+        if resp=='Bon' or resp=='bon' or resp =='1':
+            aptitude[m]=1
+        elif resp=='Moyen' or resp=='moyen' or resp=='2':
+            aptitude[m]=2
+        else:
+            aptitude[m]=3
+    EDT["aptitude"]=aptitude
+    return(EDT)                         #on renverra un dictionnaire de six dictionnaires de lundi
+                                        # à samedi et un septième pour les aptitudes
+
+
+# UTILISATION ET MODIFICATION D UN DICTIONNAIRE
+#Consigne élève
+#           Définir une fonction parametreEDT qui prend un dictionnaire EDT créé par saisieEDTdic
+#           Les clés seront les matières et les valeurs les coefficients d'aptitude et le double si
+#           cette matière intervient le lendemain ou le lundi pour le samedi
+#           On renverra un dictionnaire de 6 jours
+#Premiere version en utilisant une fonction reste pour obtenir lundi lendemain de samedi
+
+def parametreEDT(semaine,matieres,EDT):
+    touslessoirs={}
+    for j in range(6):
+        jour=semaine[j]
+        k=(j+1)%6               #quand j=5 donc samedi j+1=6 mais semaine[6] n'existe pas
+        lendemain=semaine[k]    #on prend alors =j+1%6 donc k=0 et lendemain=lundi
+        cesoir=EDT[lendemain]   #on contourne la difficulté
+        for matiere in cesoir.keys():
+            cesoir[matiere]+=1
+            cesoir[matiere]=cesoir[matiere]*EDT["aptitude"][matiere]
+        touslessoirs[jour]=cesoir
+    return(touslessoirs)
+
+#Deuxieme version en traitant samedi a part du reste de la semaine
+def parametreEDT1(semaine,matieres,EDT):
+    touslessoirs={} # on va creer un dictionnaire de six dictionnaires de cles les jours
+                    # et a chaque matiere on donne une valeur
+
+    for j in range(5):# de lundi a vendredi
+        jour=semaine[j]
+        cesoir=jour
+        lendemain=semaine[j+1]
+        jour={}
+        for matiere,valeur in EDT[lendemain].items():
+            if valeur==1:
+                jour[matiere]=2*EDT["aptitude"][matiere]
+            else:
+                jour[matiere]=EDT["aptitude"][matiere]
+        # sil y a cours le lendemain on double le coefficient d_aptitude
+        # sinon on prend le coefficient
+        touslessoirs[cesoir]=jour
+    jour=semaine[5]# on traite samedi a part
+    cesoir=jour
+    lendemain=semaine[0]
+    jour={}
+    for matiere,valeur in EDT[lendemain].items():
+            if valeur==1:
+                jour[matiere]=3*EDT["aptitude"][matiere]
+            else:
+                jour[matiere]=EDT["aptitude"][matiere]
+    touslessoirs[cesoir]=jour
+    return(touslessoirs)    # on retourne 6 dictionnaires de cles jours et valeurs les matieres avec un coefficient
+
+#autre version utilisant le fait que semaine[-1]=samedi
+def parametreEDT3(semaine,matieres,EDT):
+    touslessoirs={}
+    for j in range(6):
+        k=6-j-1
+        jour=semaine[k]
+        lendemain=semaine[k+1]
+        cesoir=EDT[lendemain]
+        for matiere in cesoir.keys():
+            cesoir[matiere]+=1
+            cesoir[matiere]=cesoir[matiere]*EDT["aptitude"][matiere]
+        touslessoirs[jour]=cesoir
+    return(touslessoirs)
+
+#TRI DANS UN DICTIONNAIRE
+
+
+def EDTdusoir(EDTjour):
+    menu={}
+
+    heure=int(input("combien d_heures_voulez_vous_travailler_ce_soir?"))
+    temps=2*heure
+    for h in range(temps):
+         max=0
+         for matiere in EDTjour.keys():
+            if EDTjour[matiere]>max:
+             result=matiere
+             max=EDTjour[matiere]
+         menu[result]=max
+         EDTjour[result]=0
+    return(menu)
+
+
+
+def plandetravail(EDT):
+    lesoir={}
+    for jour in EDT.keys():
+        print("aujourdhui,  ",jour)
+        lesoir[jour]=EDTdusoir(EDT[jour])
+    return(lesoir)
+
+
+
+
+emploidutemps=saisieEDTDic(semaine,matieres)        #on teste
+lesoir=parametreEDT(semaine,matieres,emploidutemps)
+tuvasfaire=plandetravail(lesoir)
+print(emploidutemps)
+print(lesoir)
+for jour in lesoir.keys():
+   print(jour)
+   print(EDTdusoir(lesoir[jour]))
+   print("###########################")
+print("Ce soir tu vas faire")
+print(tuvasfaire)
+

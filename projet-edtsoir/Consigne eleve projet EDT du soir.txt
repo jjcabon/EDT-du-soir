@@ -1,0 +1,57 @@
+PROJET EDT DU SOIR
+
+
+OBJECTIFS
+
+#Créer et utiliser un dictionnaire
+#Effectuer un tri dans un dictionnaire
+#Utiliser un algorithme glouton pour créer des listes
+#Objectif pédagogique: saisir l'emploi du temps d'un élève,
+saisir un niveau estimé pour chaque matière
+Utiliser cet emploi hebdomadaire pour optimiser son travail du soir
+On demande à l'élève combien d'heures il prévoit pour chaque soir. 
+On suppose que cela fera une demi heure par matiere
+chaque discipline sera affectée d'un coefficient selon le niveau estimé par le participant
+Bon= 1 Moyen = 2 Faible = 3
+Le travail effectué la veille d'un cours sera valorisé  
+et son coefficient sera doublé de manière à valoriser la préparation d'un cours la veille
+on cherchera alors les coefficients les plus importants pour etablir un planning pour chaque soir
+
+CREATION DE DICTIONNAIRES
+
+#Consigne eleve
+      En utilisant ces deux listes semaine et matieres, définir une fonction saisieEDT(jour,matieres) qui renvoie un dictionnaire
+      dont les clés sont les matières et les valeurs 1 ou 0 selon qu'il y a ou non cours ce jour la
+      Creer une fonction saisieEDTdic(semaine,matieres) qui renverra un dictionnaire dont
+      les clés sont les jours et les valeurs les dictionnaires renvoyés par la fonction saisieEDT et un dictionnaire "aptitude"
+       de clés les matières et de valeurs 1, 2 ou 3 selon le niveau dans la matiere bon=1 moyen=2 faible=3
+
+UTILISATION ET MODIFICATION D UN DICTIONNAIRE
+
+#Consigne élève
+           Pour utiliser un dictionnaire, on utilise dict[clé] qui renvoie la valeur.
+           Pour parcourir un dictionnare on utilise for nom in dict.keyes():
+           ou bien   for nom in dict.values():
+           et  for nomclé, nomvaleur in dict.items():
+
+#           Définir une fonction parametreEDT qui prend un dictionnaire EDT créé par saisieEDTdic
+           Les clés seront les matières et les valeurs les coefficients d'aptitude et le double si
+           cette matière intervient le lendemain ou le lundi pour le samedi
+           On renverra un dictionnaire de 6 jours
+
+
+TRI DANS UN DICTIONNAIRE
+
+#consigne :
+#       Un dictionnaire ne conserve pas l'ordre et il n'est pas simple de le trier par valeurs décroissantes
+       Toutes les stratégies de tri utilisées pour les listes ne peuvent plus s'appliquer
+
+#       Définir une fonction EDTsoir qui prend un des EDTjour créé par la fonction parametreEDT
+       Cette fonction demande au participant le nombre d'heures travaillée ce jour, définit le nombre de matières travaillées
+       et va rechercher un par un un nombre égal de matières dont les coefficients sont maximaux parmi EDTjour;
+       Penser à éliminer du dictionnaire à chaque étape la matière dont le coefficient est maximal avec l'instruction del(dict[clé])
+        Cette fonction renverra un dictionnaire menu de quelques matières avec leurs coefficients.
+ 
+ #      Définir une fonction plandetravail qui prend un emploi du temps créé par parametreEDT
+       et renvoie un dictionnaire lesoir dont les clés sont les jours et les valeurs des dictionnaires créés par EDTdusoir
+

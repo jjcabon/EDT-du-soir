@@ -3,26 +3,32 @@
 #
 #
 #Objectifs
+
 #Créer et utiliser un dictionnaire
 #Utiliser un algorithme glouton pour créer des listes
 #Objectif pédagogique: saisir l'emploi du temps d'un élève
 #saisir un niveau estimé pour chaque matière
-#Utiliser cet emploi hebdomadaire pour
-#optimiser son travail du soir
-#On suppose que l'élève étudiera 2 heures chaque soir
-#que cela fera 4 demi heures donc 4 matieres
-#chaque discipline sera affectée d'un coefficient
+#Utiliser cet emploi hebdomadaire pour optimiser son travail du soir
+#On demande à l'élève combien d'heures il prévoit pour chaque soir.
+#que cela fera une demi heure par matiere
+#chaque discipline sera affectée d'un coefficient selon le niveau estimé par le participant
 #Bon= 1 Moyen = 2 Faible = 3
-#Le travail effectué la veille d'un cours sera valorisé
-# et son coefficient sera doublé
-#on cherchera alors les 4 coefficients les plus importants
-#pour etablir un planning pour chaque soir
+#Le travail effectué la veille d'un cours sera valorisé  et son coefficient sera doublé
+#on cherchera alors les coefficients les plus importants pour etablir un planning pour chaque soir
 
+#on donne un emploi du temps pour tester les différentes fonctions
+EDT215={'mercredi': {'histoire': 1, 'svt': 0, 'espagnol': 0, 'sciences_economiques': 0, 'anglais': 0, 'physique': 0, 'mathematiques': 0, 'informatique': 1, 'francais': 0}, 'jeudi': {'histoire': 1, 'svt': 1, 'espagnol': 0, 'sciences_economiques': 1, 'anglais': 1, 'physique': 0, 'mathematiques': 0, 'informatique': 1, 'francais': 0}, 'mardi': {'histoire': 1, 'svt': 1, 'espagnol': 0, 'sciences_economiques': 1, 'anglais': 0, 'physique': 0, 'mathematiques': 1, 'informatique': 0, 'francais': 0}, 'samedi': {'histoire': 0, 'svt': 0, 'espagnol': 1, 'sciences_economiques': 0, 'anglais': 1, 'physique': 1, 'mathematiques': 0, 'informatique': 0, 'francais': 1}, 'vendredi': {'histoire': 0, 'svt': 1, 'espagnol': 0, 'sciences_economiques': 0, 'anglais': 0, 'physique': 1, 'mathematiques': 1, 'informatique': 0, 'francais': 1}, 'aptitude': {'histoire': 2, 'svt': 3, 'espagnol': 2, 'sciences_economiques': 3, 'anglais': 1, 'physique': 2, 'mathematiques': 1, 'informatique': 1, 'francais': 1}, 'lundi': {'histoire': 0, 'svt': 0, 'espagnol': 1, 'sciences_economiques': 0, 'anglais': 1, 'physique': 1, 'mathematiques': 0, 'informatique': 0, 'francais': 1}}
 
+#ces deux listes serviront de référence pour la suite
 semaine=['lundi','mardi','mercredi','jeudi','vendredi','samedi']
 matieres=['anglais', 'espagnol', 'francais', 'physique', 'mathematiques', 'svt','sciences_economiques', 'histoire','informatique']
+
+
 #CREATION DE DICTIONNAIRES
 #Consigne eleve
+#       Un dictionnaire dans Python a la structure dict={clé:valeur, clé2:valeur2 ... }
+#       On le crée par une instruction dict[clé] = valeur
+#       Cette structure ne conserve pas l'ordre
 #       En utilisant ces deux listes semaine et matieres, définir une fonction saisieEDT(jour,matieres) qui renvoie un dictionnaire
 #       dont les clés sont les matières et les valeurs 1 ou 0 selon qu'il y a ou non cours ce jour la
 #       Creer une fonction saisieEDTdic(semaine,matieres) qui renverra un dictionnaire dont
@@ -60,10 +66,19 @@ def saisieEDTDic(semaine,matieres):
 
 # UTILISATION ET MODIFICATION D UN DICTIONNAIRE
 #Consigne élève
+#           Pour utiliser un dictionnaire, on utilise dict[clé] qui renvoie la valeur.
+#           Pour parcourir un dictionnare on utilise for nom in dict.keyes():
+#           ou bien   for nom in dict.values():
+#           et  for nomclé, nomvaleur in dict.items():
+
 #           Définir une fonction parametreEDT qui prend un dictionnaire EDT créé par saisieEDTdic
 #           Les clés seront les matières et les valeurs les coefficients d'aptitude et le double si
 #           cette matière intervient le lendemain ou le lundi pour le samedi
 #           On renverra un dictionnaire de 6 jours
+#           on pourra commencer par traiter le samedi à part des autres jours puisque le lendemain correspond à lundi
+#           ou on cherchera des astuces en utilisant k%6 qui donne le reste de la division de k par 6
+
+
 #Premiere version en utilisant une fonction reste pour obtenir lundi lendemain de samedi
 
 def parametreEDT(semaine,matieres,EDT):
@@ -124,23 +139,33 @@ def parametreEDT3(semaine,matieres,EDT):
     return(touslessoirs)
 
 #TRI DANS UN DICTIONNAIRE
-
+#consigne :
+#       Un dictionnaire ne conserve pas l'ordre et il n'est pas simple de le trier par valeurs décroissantes
+#       Toutes les stratégies de tri utilisées pour les listes ne peuvent plus s'appliquer
+#       Définir une fonction EDTsoir qui prend un des EDTjour créé par la fonction parametreEDT
+#       Cette fonction demande au participant le nombre d'heures travaillée ce jour, définit le nombre de matières travaillées
+#       et va rechercher un par un un nombre égal de matières dont les coefficients sont maximaux parmi EDTjour;
+#       Penser à éliminer du dictionnaire à chaque étape la matière dont le coefficient est maximal avec l'instruction del(dict[clé])
+#        Cette fonction renverra un dictionnaire menu de quelques matières avec leurs coefficients.
 
 def EDTdusoir(EDTjour):
     menu={}
 
     heure=int(input("combien d_heures_voulez_vous_travailler_ce_soir?"))
     temps=2*heure
-    for h in range(temps):
-         max=0
+    for h in range(temps):          # on prendra une demi heure pour chaque matiere
+         max=0                      # a chaque boucle on commence par 0 et on recherche une valeur superieure de proche en proche
          for matiere in EDTjour.keys():
-            if EDTjour[matiere]>max:
-             result=matiere
+            if EDTjour[matiere]>max:  #si un coefficient est superieur a max alors max prend cette valeur et on memorise la matiere correspondante
+             result=matiere         # si max est superieur au coefficient alors il garde sa valeur
              max=EDTjour[matiere]
          menu[result]=max
-         EDTjour[result]=0
+         print("max trouve",result,menu[result])
+         del(EDTjour[result])               #on s'assure que la matiere reperee ne servira plus dans les comparaisons
     return(menu)
 
+#       Définir une fonction plandetravail qui prend un emploi du temps créé par parametreEDT
+#       et renvoie un dictionnaire lesoir dont les clés sont les jours et les valeurs des dictionnaires créés par EDTdusoir
 
 
 def plandetravail(EDT):
@@ -150,18 +175,42 @@ def plandetravail(EDT):
         lesoir[jour]=EDTdusoir(EDT[jour])
     return(lesoir)
 
+# Pour motiver l'eleve à travailler en respectant le plan donne on calculera un score qui va mesurer l'efficacite de son travail
+#on commencera a initialise score a 0 avant de passer aux calculs
+
+def calculScore(EDT):
+    score={}
+    total=0
+    for jour in EDT.keys():#Initialisation de score
+        EDTjour=EDT[jour]
+        for matiere in EDTjour.keys():
+            score[matiere]=0
+    for jour in EDT.keys():#calcul de score
+        EDTjour=EDT[jour]
+        for matiere in EDTjour.keys():
+            score[matiere]=score[matiere]+EDTjour[matiere]
+    for matiere in score.keys():
+        total=total+score[matiere]
+    return(score,total)
 
 
 
-emploidutemps=saisieEDTDic(semaine,matieres)        #on teste
-lesoir=parametreEDT(semaine,matieres,emploidutemps)
+
+
+#fonctionnement
+
+#emploidutemps=saisieEDTDic(semaine,matieres)
+#print(emploidutemps)       #on teste
+lesoir=parametreEDT(semaine,matieres,EDT215)
 tuvasfaire=plandetravail(lesoir)
-print(emploidutemps)
-print(lesoir)
-for jour in lesoir.keys():
-   print(jour)
-   print(EDTdusoir(lesoir[jour]))
-   print("###########################")
+#print(emploidutemps)
+#print(lesoir)
+#for jour in lesoir.keys():
+ #  print(jour)
+  # print(EDTdusoir(lesoir[jour]))
+   #print("###########################")
 print("Ce soir tu vas faire")
 print(tuvasfaire)
+print(" voici les scores obtenus")
+print(calculScore(tuvasfaire))
 
